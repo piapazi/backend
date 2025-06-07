@@ -16,8 +16,17 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.http import JsonResponse
+from accounts.views import get_csrf_token
+
+def root(request):
+    return JsonResponse({"message": "Welcome to the Fixam API!"})
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path('', root),
+    path('admin/', admin.site.urls),
+    path('api/auth/', include('dj_rest_auth.urls')),
+    path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
+    path('api/csrf', get_csrf_token),  # Add this line
 ]

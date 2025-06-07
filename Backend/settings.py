@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-2nl%$%b^cgb$ru-*hlj6jrrwq83&a8rznnrpx=aum^@0%s4!j%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.51.66.194', 'localhost', '0.0.0.0']
+ALLOWED_HOSTS = ['13.51.66.194', 'localhost', '0.0.0.0', '127.0.0.1']
 
 
 # Application definition
@@ -37,7 +37,20 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
+    "dj_rest_auth.registration",
+    "accounts",
+    "corsheaders",
+    "django_extensions",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -47,7 +60,14 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'allauth.account.middleware.AccountMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://www.fixam.xyz",  # React app's domain
+]
+
 
 ROOT_URLCONF = "Backend.urls"
 
@@ -73,10 +93,19 @@ WSGI_APPLICATION = "Backend.wsgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    #"default": {
+    #    "ENGINE": "django.db.backends.sqlite3",
+    #    "NAME": BASE_DIR / "db.sqlite3",
+    #}
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django_exam',
+        'USER': 'postgres',
+        'PASSWORD': 'elorapp',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
+
 }
 
 
@@ -120,3 +149,21 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer',
+}
+
+RECAPTCHA_PUBLIC_KEY = "6LeK2FcrAAAAAFfFkdjdhCNyWbiZ-0HeL6x0VcR-"
+RECAPTCHA_PRIVATE_KEY = "6LeK2FcrAAAAADQvUsLI4-3j1sLbqqNMZdz19q3p"
